@@ -1,5 +1,3 @@
-readme
+# GPS Dashboard
 
-in the Servicio ID 11: SEA, sobre ambiente
-Permiso ID 1 es DIA
-Periso ID 2 es EIA 
+This website queries MS Server, uses flask, Werkzeug, Jinja to build the web framework, and uses JavaScript to visualize the processed data and build other interactive features.
