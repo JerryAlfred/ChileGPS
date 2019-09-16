@@ -1,0 +1,168 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Graph
+{% endblock %}
+
+{% block main %}
+
+
+<h1 class="mb-3">SUPER <br> </h1>
+
+<h2 class="text-center">Hasta aqui</h2>
+
+<div class="container">
+
+        <div class="row">
+          <div class="col-sm-6">
+
+                <h1 class="mb-3"> {{ send_etapa [2] }} </h1>
+                <h3 class="mb-3">Permisos Ingresado </h3>
+
+            </div>
+          <div class="col-sm-6">
+                <h1 class="mb-3"> {{ send_enrolled_servicio }} </h1>
+                <h3 class="mb-3">Servicios Cooperado </h3>
+
+        </div>
+        </div>
+    </div>
+
+
+    <div class="container">
+            <div class="row">
+              <div class="col-sm-6">
+                
+                <div id="canvas-holder" style="width:100%">
+                        <canvas id="chart_area_1"></canvas>
+                    </div>
+
+                    <script>
+
+                        var config1 = {
+                            type: 'doughnut',
+                            data: {
+                                datasets: [{
+                                    data: [{{ send_etapa [0] }}, {{ send_etapa [1] }}, {{ send_etapa [2] }}
+                                    
+                                    ],
+                                    backgroundColor: [
+                                        '#FF0000', '#e7b416', '#008000'
+                                    ],
+                                    label: 'Dataset 1'
+                                }],
+                                labels: ['Planificado', 'Desarrollando', 'Terminado']
+                                
+                                
+                            },
+                            options: {
+                                responsive: true,
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Condicion de etapas'
+                                },
+                                animation: {
+                                    animateScale: true,
+                                    animateRotate: true
+                                }
+                            }
+                        };
+                            
+                    </script>
+
+                </div>
+
+
+
+              <div class="col-sm-6">       
+                    <div id="canvas-holder" style="width:100%">
+                    <canvas id="chart_area_2"></canvas>
+                </div>
+           
+                <script>
+
+                    var config2 = {
+                        type: 'doughnut',
+                        data: {
+                            datasets: [{
+                                data: [{{ send_light [0] }}, {{ send_light [1] }}, {{ send_light [2] }}
+                                
+                                ],
+                                backgroundColor: [
+                                    '#FF0000', '#e7b416', '#008000'
+                                ],
+                                label: 'Dataset 1'
+                            }],
+                            labels: ['Red', 'Yellow', 'Green']
+                            
+                            
+                        },
+                        options: {
+                            responsive: true,
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Condicion de luzes'
+                            },
+                            animation: {
+                                animateScale: true,
+                                animateRotate: true
+                            }
+                        }
+                    };
+            
+                    window.onload = function() {
+                    var cty = document.getElementById('chart_area_1').getContext('2d');
+			        window.myDoughnut = new Chart(cty, config1);
+
+                    var aa = document.getElementById('chart_area_2').getContext('2d');
+                    window.myDoughnut = new Chart(aa, config2);}
+                    
+                </script>
+
+              </div>
+
+            </div>
+
+
+<br></br>
+
+
+<table class="table table-striped">
+        <thead>
+            <tr>
+            <th scope="Servicio Numbre">Servicio Numbre</th>
+            <th scope="Permiso Numbre">Permiso Numbre</th>
+            <th scope="Condicion">Condicion</th>
+            <th scope="Light">Light</th>
+            </tr>
+        </thead>
+        <tbody>
+                {% for send_list in send_lists %}
+                <tr>
+                    <td>{{ send_list[2] }}</td> 
+                    <td>{{ send_list[3] }}</td> 
+                    <td>{{ send_list[6] }}</td>               
+                    <td>{% if send_list[7] == "Red" %}
+                            <div id="red_circle"></div>
+                        {% elif send_list[7] == "Yellow" %}
+                            <div id="yellow_circle"></div>
+                        {% else %}
+                            <div id="green_circle"></div>
+                        {% endif %}</td>               
+                </tr>
+                {% endfor %}
+        </tbody>
+        </table> 
+
+    </div>
+      
+
+
+{% endblock %} 
+

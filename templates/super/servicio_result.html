@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Graph
+{% endblock %}
+
+{% block main %}
+
+<h1 class="mb-3">Permisos en Oficina {{ (sends[0])[1] }}</h1>
+<br>
+
+<h3 class="mb-3">SUPER Condicion</h3>
+<br>
+<table class="table table-striped">
+        <thead>
+            <tr>
+            <th scope="Servicio">Servicio</th>
+            <th scope="Permiso">Permiso</th>
+            <th scope="Principio">Fecha de Principio</th>
+            <th scope="Fin">Fecha de Fin</th>
+            <th scope="Etapa">Etapa</th>
+            <th scope="Condicion">Condicion</th>
+        </tr>
+        </thead>
+        <tbody>
+                {% for send in sends %}
+                <tr>
+                    <td>{{ send[2] }}</td> 
+                    <td>{{ send[3] }}</td>
+                    <td>{{ send[4] }}</td>
+                    <td>{{ send[5] }}</td>
+
+                    <td>{{ send[6] }}</td>
+                    <td>{% if send[7] == "Red" %}
+                            <div id="red_circle"></div>
+                        {% elif send[7] == "Yellow" %}
+                            <div id="yellow_circle"></div>
+                        {% else %}
+                            <div id="green_circle"></div>
+                        {% endif %}
+                    </td>
+    
+                </tr>
+                {% endfor %}
+        </tbody>
+        </table>
+
+    </div>
+      
+
+
+{% endblock %} 
+
+<!-- <td><a href="/">Check Out This Form!</a>{{ send[2] }}</td>> -->
+
+
+<!-- <table>
+        <thead>
+        <th>Servicio</th>
+        <th>Condicion</th>
+        </thead>
+        <tbody>
+          <meta charset="UTF-8">
+          {% for send in sends %}
+            <tr>
+                <td>{{ send[0] }}</td>
+                <td>{% if send[1] == 3 %}
+                        <div id="red_circle"></div>
+                    {% elif send[1] == 2 %}
+                        <div id="yellow_circle"></div>
+                    {% else %}
+                        <div id="green_circle"></div>
+                    {% endif %}
+                </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+     -->
+
+
+<!-- <td><a href="{{ ''.join(['/permiso/servicio/numbre/search?keyword=', send[0]]) }}">{{ send[0] }}</a></td>  -->

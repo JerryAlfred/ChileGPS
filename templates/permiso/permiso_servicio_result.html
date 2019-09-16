@@ -1,0 +1,59 @@
+<!-- this is when the student cancel the appointment with the visitor before he has booked the time-->
+{% extends "layout.html" %}
+
+{% block title %}
+    Check Permiso
+{% endblock %}
+
+{% block main %}
+
+<div class="container">
+    <div class="row">
+      <div class="col-3">
+        <form action="/permiso/permiso" method="post">
+
+            <h3 class="mb-3">Which permit do you want to check?</h3>
+        
+          <div class="form-group">
+            <label for="exampleFormControlSelect1">Check</label>
+            <select class="form-control" id="exampleFormControlSelect1" select name="servicio_numbre">
+            <option disabled selected value=""> {{ send_servicio_nu }} </option>
+              {% for send_servicio_numbre_list in send_servicio_numbre_lists %}
+              <option value="{{ send_servicio_numbre_list }}">{{ send_servicio_numbre_list }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        
+          <button type="submit" class="btn btn-primary my-1">Check</button>
+        </form>
+
+        <br>
+
+        <form action="/permiso/permiso/result" method="post">
+        
+            <h3 class="mb-3">Which exact permit do you want to check?</h3>
+        
+          <div class="form-group">
+            <select class="form-control" id="exampleFormControlSelect1" select name="permiso_numbre">
+            <option disabled selected value="">Choose...</option>
+              {% for send_permiso_numbre_list in send_permiso_numbre_lists %}
+              <option value="{{ send_permiso_numbre_list }}">{{ send_permiso_numbre_list }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        
+          <button type="submit" class="btn btn-primary my-1">Check</button>
+        </form>
+
+
+
+      </div>
+      <div class="col-9">
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+{% endblock %}

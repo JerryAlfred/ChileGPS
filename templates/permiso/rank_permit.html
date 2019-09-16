@@ -1,0 +1,145 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Graph
+{% endblock %}
+
+{% block main %}
+
+<h1 class="mb-3">Cuando permisos estan on hold en cada oficina</h1>
+
+        <div id="container" style="width: 100%" >
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <script>
+
+            var name_list = [{% for item in send_select_numbre %}
+                            "{{ item[0] }}",
+                            {% endfor %}];
+
+            var number_list = {{ send_specific }} ;
+
+            var barChartData = {
+                labels: name_list,
+
+                datasets: [
+                {
+                    label: 'Inversion of projects affected by oficina/M$',
+                    backgroundColor: window.chartColors.blue,
+                    borderColor: window.chartColors.white,
+                    borderWidth: 1,
+                    data: number_list
+                    
+                },
+            ]
+            };
+
+
+            window.onload = function() {
+                var ctx = document.getElementById('canvas').getContext('2d');
+                window.myBar = new Chart(ctx, {
+                    type: 'bar',
+                    data: barChartData,
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Inversion-Oficina Chart'
+                        },
+                        maintainAspectRatio: true,
+                        onClick: function(c,i) {
+                                e = i[0];
+                                var x_value = this.data.labels[e._index];
+                                var y_value = this.data.datasets[0].data[e._index];
+                                window.location.replace('/permiso/servicio/numbre/search?keyword='+(x_value));
+                            },
+                    }
+                    
+                });
+
+                document.getElementById('ButtonRankMax').addEventListener('click', function() {
+
+                    var join_list = [name_list, number_list];
+
+                    function transpose(a) {
+                        return Object.keys(a[0]).map(function(c) {
+                            return a.map(function(r) { return r[c]; });
+                        });
+                    };
+                 
+                    join_list = transpose(join_list);                     
+                    join_list.sort(function(a,b){return b[1] - a[1];}); 
+                    join_list = transpose(join_list);  
+
+                    name_list = join_list[0];
+                    number_list = join_list[1];
+
+                    barChartData.labels = name_list;
+                    barChartData.datasets[0].data = number_list;
+                    window.myBar.update();
+
+                });
+
+
+
+                document.getElementById('ButtonRankMin').addEventListener('click', function() {
+
+                    var join_list = [name_list, number_list];
+
+                    function transpose(a) {
+                        return Object.keys(a[0]).map(function(c) {
+                            return a.map(function(r) { return r[c]; });
+                        });
+                    };
+
+                    join_list = transpose(join_list);                     
+                    join_list.sort(function(a,b){return a[1] - b[1];}); 
+                    join_list = transpose(join_list);  
+
+                    name_list = join_list[0];
+                    number_list = join_list[1];
+
+                    barChartData.labels = name_list;
+                    barChartData.datasets[0].data = number_list;
+                    window.myBar.update();
+
+                    });
+
+
+                };
+
+
+
+            </script>
+
+        <button id="ButtonRankMax">Rank from Max to Min</button> 
+        <button id="ButtonRankMin">Rank from Min to Max</button> 
+
+
+<br><br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+            <a class="btn btn-primary btn" href="/permiso/rank_permit" role="button">Mostrar todos {{ send_servicio_nu }}</a>                
+        </div>
+
+        <div class="col-9">
+                <form action="/permiso/rank_permit" method="post">
+                    {% for item in send_all_numbre %}
+                        <label></label><input type="checkbox" name="check" value= {{ item[1] }} > {{ item[0] }} </label>
+                    {% endfor %}
+                <br>
+                  <button type="submit" class="btn btn-primary my-1">Comparar las oficinas</button>
+                </form>
+
+        </div>
+     </div>
+    </div>
+
+
+{% endblock %} 

@@ -1,0 +1,194 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Graph
+{% endblock %}
+
+{% block main %}
+
+
+
+<h1 class="mb-3">Actuación de Oficina de GPS <br> </h1>
+
+    <div class="container">
+            <div class="row">
+              <div class="col-sm-6">
+                
+                <div id="canvas-holder" style="width:100%">
+                        <canvas id="chart_area_1"></canvas>
+                    </div>
+
+                    <script>
+
+                        var config1 = {
+                            type: 'doughnut',
+                            data: {
+                                datasets: [{
+                                    data: [{{ send_compare_data [1] }}, {{ send_compare_data [3] }}
+                                    
+                                    ],
+                                    backgroundColor: [
+                                        window.chartColors.red,
+                                        window.chartColors.orange,
+                                    ],
+                                    label: 'Dataset 1'
+                                }],
+                                labels: ['Finished', 'Ongoing']
+                                
+                                
+                            },
+                            options: {
+                                responsive: true,
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Projects Hasta Junio de 2019'
+                                },
+                                animation: {
+                                    animateScale: true,
+                                    animateRotate: true
+                                }
+                            }
+                        };
+                            
+                    </script>
+
+                </div>
+
+
+
+              <div class="col-sm-6">       
+                    <div id="canvas-holder" style="width:100%">
+                    <canvas id="chart_area_2"></canvas>
+                </div>
+           
+                <script>
+
+                    var config2 = {
+                        type: 'doughnut',
+                        data: {
+                            datasets: [{
+                                data: [{{ send_compare_data [0] }}, {{ send_compare_data [2] }}
+                                
+                                ],
+                                backgroundColor: [
+                                    window.chartColors.green,
+                                    window.chartColors.yellow,
+                                ],
+                                label: 'Dataset 1'
+                            }],
+                            labels: ['Finished', 'Ongoing']
+                            
+                            
+                        },
+                        options: {
+                            responsive: true,
+                            legend: {
+                                position: 'top',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Investment Hasta Junio de 2019'
+                            },
+                            animation: {
+                                animateScale: true,
+                                animateRotate: true
+                            }
+                        }
+                    };
+            
+                </script>
+              </div>
+            </div>
+           
+         <h6 class="mb-6"> </h6>
+
+        <div style="width: 100%"></div>
+
+                <canvas id="canvas"></canvas>
+            </div>
+
+
+            <script>
+                var chartData = {
+                    labels: [{% for item in send_history_data[0] %}
+                            "{{item}}",
+                            {% endfor %}],
+
+                    datasets: [{
+                        type: 'line',
+                        label: 'Agregate Investment',
+                        borderColor: window.chartColors.red,
+                        borderWidth: 2,
+                        fill: false,
+                        data: {{ send_history_data[2] }},
+                        yAxisID: 'y-axis-1'
+                    }, 
+                
+                    {
+                        type: 'bar',
+                        label: 'Agregate Projects',
+                        backgroundColor: window.chartColors.blue,
+                        data: {{ send_history_data[1] }},
+                        borderColor: 'white',
+                        borderWidth: 2,
+                        yAxisID: 'y-axis-2'
+                    }]
+                };
+
+
+                window.onload = function() {
+                    var ctx = document.getElementById('canvas').getContext('2d');
+                    
+                    var cty = document.getElementById('chart_area_1').getContext('2d');
+			        window.myDoughnut = new Chart(cty, config1);
+
+                    var aa = document.getElementById('chart_area_2').getContext('2d');
+			        window.myDoughnut = new Chart(aa, config2);
+
+
+                    window.myMixedChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: chartData,
+                        options: {
+                            responsive: true,
+                            title: {
+                                display: true,
+                                text: 'Projects and their investment in each month'
+                            },
+                            tooltips: {
+                                mode: 'index',
+                                intersect: true
+                            },
+                            scales: {
+                                yAxes: [{
+                                    type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                                    display: true,
+                                    position: 'left',
+                                    id: 'y-axis-1',
+                                }, {
+                                    type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                                    display: true,
+                                    position: 'right',
+                                    id: 'y-axis-2',
+                                    // grid line settings
+                                    gridLines: {
+                                        drawOnChartArea: false, // only want the grid lines for one axis to show up
+                                    },
+                                }],
+                            },
+
+                        }
+                    });
+                };
+
+
+            </script>
+
+
+
+{% endblock %} 
+
+

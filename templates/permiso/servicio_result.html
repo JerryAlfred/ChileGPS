@@ -1,0 +1,404 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Graph
+{% endblock %}
+
+{% block main %}
+
+<div class="container">
+        <div class="row">
+          <div class="col-4">
+              <form action="/permiso/servicio" method="post">
+    
+                <h1 class="mb-3">Check Office</h1>
+            
+              <div class="form-group">
+                <label for="exampleFormControlSelect1"> </label>
+                <select class="form-control" id="exampleFormControlSelect1" select name="servicio_numbre">
+                <option disabled selected value="">Choose...</option>
+                  {% for send_servicio_numbre_list in send_servicio_numbre_lists %}
+                  <option value="{{ send_servicio_numbre_list }}">{{ send_servicio_numbre_list }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            
+              <button type="submit" class="btn btn-primary my-1">Check</button>
+            </form>      
+        </div>
+
+          <div class="col-8">
+
+                <h1 class="mb-3">Performance Per Permit In {{ send_servicio_nu }}</h1>
+
+                <div style="width: 100%">
+                        <canvas id="canvas"></canvas>
+                    </div>
+        
+
+
+
+
+                    <script>
+
+                        /* takes a string phrase and breaks it into separate phrases 
+                        no bigger than 'maxwidth', breaks are made at complete words.*/
+
+                        function formatLabel(str, maxwidth){
+                            var sections = [];
+                            var words = str.split(" ");
+                            var temp = "";
+
+                            words.forEach(function(item, index){
+                                if(temp.length > 0)
+                                {
+                                    var concat = temp + ' ' + item;
+
+                                    if(concat.length > maxwidth){
+                                        sections.push(temp);
+                                        temp = "";
+                                    }
+                                    else{
+                                        if(index == (words.length-1))
+                                        {
+                                            sections.push(concat);
+                                            return;
+                                        }
+                                        else{
+                                            temp = concat;
+                                            return;
+                                        }
+                                    }
+                                }
+
+                                if(index == (words.length-1))
+                                {
+                                    sections.push(item);
+                                    return;
+                                }
+
+                                if(item.length < maxwidth) {
+                                    temp = item;
+                                }
+                                else {
+                                    sections.push(item);
+                                }
+
+                            });
+
+                            return sections;
+                        };
+
+
+                        function putback(before){
+                            after = "";
+                            before.forEach(function(entry){
+                                after = after.concat((entry)+" ")
+                            });
+                            return after 
+                        };
+
+
+                        var ed_num_list = {{ send_ed_num }};
+                        var ing_num_list = {{ send_ing_num }};
+
+
+                        var name_list = [{% for item in send_select_numbre %}
+                                    // "{{ item[0] }}",
+                                    formatLabel("{{ item[0] }}",25),
+                                    {% endfor %}];
+
+                        var legal_time_list = {{ send_legal_time }};
+                        var legal_ratio_list = {{ send_legal_ratio }};
+                        var avg_time_list = {{ send_avg_time }};
+
+
+                        var barChartData = {
+                            labels: name_list, 
+
+                            datasets: [
+                            {
+                                type: 'line',
+                                label: 'Legal time',
+                                borderColor: window.chartColors.orange,
+                                borderWidth: 2,
+                                fill: false,
+                                data: legal_time_list,
+                                yAxisID: 'y-axis-1',
+                                stepped: true,
+                            }, 
+                        
+                            {
+                                type: 'line',
+                                label: 'Legal ratio',
+                                borderColor: window.chartColors.yellow,
+                                borderWidth: 2,
+                                fill: false,
+                                data: legal_ratio_list,
+                                yAxisID: 'y-axis-2'
+                            }, 
+
+                            {
+                                type: 'bar',
+                                label: 'Average Process Time',
+                                borderColor: window.chartColors.white,
+                                backgroundColor: window.chartColors.purple,
+                                borderWidth: 2,
+                                fill: true,
+                                data: avg_time_list,
+                                yAxisID: 'y-axis-1'
+                            }, 
+
+                        ]                    
+                            
+                        };
+        
+                        
+                        window.onload = function() {
+                            var ctx = document.getElementById('canvas').getContext('2d');
+                            window.myMixedChart = new Chart(ctx, {
+                                type: 'bar',
+                                data: barChartData,
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: true,
+
+                                    title: {
+                                        display: true,
+                                        text: 'GPS Permit Team'
+                                    },
+                                    tooltips: {
+                                        // position: position,
+                                        mode: 'nearest',
+                                        intersect: false, 
+                                        callbacks: {
+                                            afterLabel: function(tooltipItems, data) {
+                                                return [('Nº Aprobados: ' + ed_num_list[tooltipItems.index]),('Nº En proceso: ' + ing_num_list[tooltipItems.index])]
+                                            }
+                                        }
+                                    },
+                                    scales: {
+                                        yAxes: [{
+                                            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                                            display: true,
+                                            position: 'left',
+                                            id: 'y-axis-1',
+                                        }, {
+                                            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                                            display: true,
+                                            position: 'right',
+                                            id: 'y-axis-2',
+                                            // grid line settings
+                                            gridLines: {
+                                                drawOnChartArea: false, // only want the grid lines for one axis to show up
+                                            },
+                                        }],
+                                    },
+                                    onClick: function(c,i) {
+                                        e = i[0];
+                                        var x_value = this.data.labels[e._index];
+                                        var y_value = this.data.datasets[0].data[e._index];
+                                        window.location.replace('/permiso/permiso/numbre/search?keyword='+('{{ send_servicio_id }}')+'_'+(putback(x_value)));
+                            },
+                                },
+                                
+                            });
+                        
+                        
+
+                document.getElementById('ButtonRankEdNum').addEventListener('click', function() {
+
+                    var join_list = [name_list, ed_num_list, ing_num_list, legal_time_list, legal_ratio_list, avg_time_list];
+
+                    function transpose(a) {
+                        return Object.keys(a[0]).map(function(c) {
+                            return a.map(function(r) { return r[c]; });
+                        });
+                    };
+
+                    join_list = transpose(join_list);                     
+                    join_list.sort(function(a,b){return b[1] - a[1];}); 
+                    join_list = transpose(join_list);  
+
+                    name_list = join_list[0];
+                    ed_num_list = join_list[1];
+                    ing_num_list = join_list[2];
+                    legal_time_list = join_list[3];
+                    legal_ratio_list = join_list[4];
+                    avg_time_list = join_list[5];
+
+                    barChartData.labels = name_list;
+                    barChartData.datasets[0].data = legal_time_list;
+                    barChartData.datasets[1].data = legal_ratio_list;
+                    barChartData.datasets[2].data = avg_time_list;
+
+                    window.myMixedChart.update();
+
+                    });
+
+                    document.getElementById('ButtonRankIngNum').addEventListener('click', function() {
+                        var join_list = [name_list, ed_num_list, ing_num_list, legal_time_list, legal_ratio_list, avg_time_list];
+
+                        function transpose(a) {
+                            return Object.keys(a[0]).map(function(c) {
+                                return a.map(function(r) { return r[c]; });
+                            });
+                        };
+
+                        join_list = transpose(join_list);                     
+                        join_list.sort(function(a,b){return b[2] - a[2];}); 
+                        join_list = transpose(join_list);  
+
+                        name_list = join_list[0];
+                        ed_num_list = join_list[1];
+                        ing_num_list = join_list[2];
+                        legal_time_list = join_list[3];
+                        legal_ratio_list = join_list[4];
+                        avg_time_list = join_list[5];
+
+                        barChartData.labels = name_list;
+                        barChartData.datasets[0].data = legal_time_list;
+                        barChartData.datasets[1].data = legal_ratio_list;
+                        barChartData.datasets[2].data = avg_time_list;
+
+                        window.myMixedChart.update();
+
+                        });
+
+                    
+                    document.getElementById('ButtonRankLegalTime').addEventListener('click', function() {
+
+                        var join_list = [name_list, ed_num_list, ing_num_list, legal_time_list, legal_ratio_list, avg_time_list];
+
+                        function transpose(a) {
+                            return Object.keys(a[0]).map(function(c) {
+                                return a.map(function(r) { return r[c]; });
+                            });
+                        };
+
+                        join_list = transpose(join_list);                     
+                        join_list.sort(function(a,b){return b[3] - a[3];}); 
+                        join_list = transpose(join_list);  
+
+                        name_list = join_list[0];
+                        ed_num_list = join_list[1];
+                        ing_num_list = join_list[2];
+                        legal_time_list = join_list[3];
+                        legal_ratio_list = join_list[4];
+                        avg_time_list = join_list[5];
+
+                        barChartData.labels = name_list;
+                        barChartData.datasets[0].data = legal_time_list;
+                        barChartData.datasets[1].data = legal_ratio_list;
+                        barChartData.datasets[2].data = avg_time_list;
+
+                        window.myMixedChart.update();
+
+                        });
+
+                    document.getElementById('ButtonRankLegalRatio').addEventListener('click', function() {
+
+                        var join_list = [name_list, ed_num_list, ing_num_list, legal_time_list, legal_ratio_list, avg_time_list];
+
+                        function transpose(a) {
+                            return Object.keys(a[0]).map(function(c) {
+                                return a.map(function(r) { return r[c]; });
+                            });
+                        };
+
+                        join_list = transpose(join_list);                     
+                        join_list.sort(function(a,b){return b[4] - a[4];}); 
+                        join_list = transpose(join_list);  
+
+                        name_list = join_list[0];
+                        ed_num_list = join_list[1];
+                        ing_num_list = join_list[2];
+                        legal_time_list = join_list[3];
+                        legal_ratio_list = join_list[4];
+                        avg_time_list = join_list[5];
+
+                        barChartData.labels = name_list;
+                        barChartData.datasets[0].data = legal_time_list;
+                        barChartData.datasets[1].data = legal_ratio_list;
+                        barChartData.datasets[2].data = avg_time_list;
+
+                        window.myMixedChart.update();
+
+                        });
+
+                        document.getElementById('ButtonRankAvgTime').addEventListener('click', function() {
+
+                        var join_list = [name_list, ed_num_list, ing_num_list, legal_time_list, legal_ratio_list, avg_time_list];
+
+                        function transpose(a) {
+                            return Object.keys(a[0]).map(function(c) {
+                                return a.map(function(r) { return r[c]; });
+                            });
+                        };
+
+                        join_list = transpose(join_list);                     
+                        join_list.sort(function(a,b){return b[5] - a[5];}); 
+                        join_list = transpose(join_list);  
+
+                        name_list = join_list[0];
+                        ed_num_list = join_list[1];
+                        ing_num_list = join_list[2];
+                        legal_time_list = join_list[3];
+                        legal_ratio_list = join_list[4];
+                        avg_time_list = join_list[5];
+
+                        barChartData.labels = name_list;
+                        barChartData.datasets[0].data = legal_time_list;
+                        barChartData.datasets[1].data = legal_ratio_list;
+                        barChartData.datasets[2].data = avg_time_list;
+
+                        window.myMixedChart.update();
+
+                        });
+
+                    };
+        
+
+
+                    </script>
+
+                <button id="ButtonRankEdNum">Rank permisos aprobabos</button> 
+                <button id="ButtonRankIngNum">Rank permisos en proceso</button> 
+                <button id="ButtonRankLegalTime">Rank tiempo legal</button> 
+                <button id="ButtonRankLegalRatio">Rank ratio legal</button> 
+                <button id="ButtonRankAvgTime">Rank tiempo promedio </button> 
+
+          </div>
+    
+        </div>
+      </div>
+
+      <br><br>
+
+
+<div class="container">
+    <div class="row">
+
+        <div class="col-3">
+            <a class="btn btn-primary btn" onclick="this.href='/permiso/servicio/numbre/search?keyword=' + '{{ send_servicio_nu }}';" role="button">Volver a Oficina {{ send_servicio_nu }}</a>                
+        </div>
+
+        <div class="col-9">
+
+                <form action="/permiso/servicio" method="post">
+                
+                    {% for item in send_all_numbre %}
+                        <label></label><input type="checkbox" name="check" value= {{ item[1] }} > {{ item[0] }} </label>
+                    {% endfor %}
+                <br>
+                  <button type="submit" class="btn btn-primary my-1">Compare permits</button>
+                </form>
+
+        </div>
+     </div>
+
+    </div>
+
+
+
+{% endblock %} 

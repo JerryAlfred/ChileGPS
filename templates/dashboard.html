@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Graph
+{% endblock %}
+
+{% block main %}
+
+ <div class="container">
+    <div class="row">
+
+        <div class="col-4">
+            <h1>Politicas publicas</h1>
+            
+        </div>
+        <div class="col-4">
+            <h1>Gestion de proyectos</h1>
+        </div>
+        <div class="col-4">
+            <h1>SUPER</h1>
+        </div>
+
+      </div>
+      
+      <br>
+    <div class="row">
+        <div class="col-4">
+            <h1> {{ senda[0] }} </h1>
+            <h3> instituciónes alineadas </h3>
+        </div>
+          <div class="col-4">
+            <h1> {{ sendp[0] }} </h1> 
+            <h3> proyectos en el catastro </h3>
+          </div>
+          <div class="col-4">
+            <h1> {{ sends[0] }} </h1> 
+            <h3> institucoines ya incorporadas </h3>
+         </div>
+        </div>
+
+    <br>     
+    
+    
+    <div class="row">
+        <div class="col-4">
+            <div class="row">
+                <div class="col">
+                    <h1> {{ senda[1] }} </h1> 
+                    <h5> medidas implementada </h5>
+                </div>
+                <div class="col">
+                    <h1> {{ senda[2] }} </h5>
+                    <h5> medidas desarrolando </h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-4">
+            <div class="row">
+                <div class="col">
+                    <h1> {{ sendp[1] }}%</h1>
+                    <h5> tiempo real/tiempo legal sectorial </h5> 
+                </div>
+                <div class="col">
+                        <h2> {{ sendp[2] }}</h2>
+                        <h5> dias de DIA </h5>           
+                        <h2> {{ sendp[3] }}</h2>
+                        <h5> dias de EIA </h5>                              
+                </div>
+            </div>
+        </div>
+
+        <div class="col-4">
+            <div class="row">
+                <div class="col">
+                    <h1>{{ sends[1] }} </h1> 
+                    <h5> permisos digitalizados </h5>
+                </div>
+                <div class="col">
+                    <h1>{{ sends[2] }} </h1>
+                    <h5> permisos en proceso de digitalización </h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <footer class="small text-center text-muted">
+                    Notes
+                    <br>
+                    *Here the "tiempo real/tiempo legal sectorial" counts all the sectorial permit data except for SEA (since it's counted in the DIA EIA section)
+                </footer>
+        </div>
+        <div class="col-6">
+                <footer class="small text-center text-muted"> The data is updated on {{ send_time_now }}
+                </footer>
+                <footer class="small text-center text-muted"> <a href="/home/refresh">Actualizar la base de datos</a> </footer>
+
+        </div>
+    </div>
+             
+
+{% endblock %} 

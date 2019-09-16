@@ -1,0 +1,132 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Graph
+{% endblock %}
+
+{% block main %}
+
+<h1 class="mb-3">Oficina de Gestión de Proyectos Sustentables</h1>
+<br>
+
+<div class="row">
+        <div class="col-4">
+            
+            <a class="btn btn-info btn-lg" href="/alineacion" role="button">Politicas Pro-Inversión</a>
+            <br></br>
+            <a class="btn btn-info btn" href="/home/rank_alineacion" role="button">Rank</a>
+            <br></br>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                    <th scope="Servicio">Servicio</th>
+                    <th scope="Descripcion">Progreso</th>
+                    <th scope="Condicion">Condicion</th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+                        {% for send3 in send3s %}
+                        <tr>
+                        
+                        
+                            <td>{% if send3[4] == "" %}
+                                    {{ send3[1] }}
+                            {% else %}
+                            <a href="{{ ''.join(['/alineacion/servicio/id/search?keyword=', send3[0]]) }}"> {{ send3[1] }} </a>
+                            {% endif %}
+                            </td>
+
+                            <td>{{ send3[4] }}</td> 
+
+                            <td>{% if send3[2] == "Red" %}
+                                    <div id="red_circle"></div>
+                                {% elif send3[2] == "Yellow" %}
+                                    <div id="yellow_circle"></div>
+                                {% else %}
+                                    <div id="green_circle"></div>
+                                {% endif %}
+                            </td>
+                            
+                        </tr>
+                        {% endfor %}
+                </tbody>
+            </table>   
+        </div>
+
+        
+
+        <div class="col-4">
+
+            <a class="btn btn-info btn-lg" href="/permiso" role="button">Gestión de Proyectos</a>
+            <br></br>
+            <a class="btn btn-info btn" href="/home/rank_permiso" role="button">Rank</a>
+            <br></br>
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                    <th scope="Servicio">Servicio</th>
+                    <th scope="Condicion">Condicion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        {% for send1 in send1s %}
+                        <tr>
+                            <td><a href="{{ ''.join(['/permiso/servicio/numbre/search?keyword=', send1[0]]) }}">{{ send1[0] }}</a></td> 
+                            <td>{% if send1[1] == 'Red' %}
+                                    <div id="red_circle"></div>
+                                {% elif send1[1] == 'Yellow' %}
+                                    <div id="yellow_circle"></div>
+                                {% else %}
+                                    <div id="green_circle"></div>
+                                {% endif %}
+                            </td>
+           
+                        </tr>
+                        {% endfor %}
+                </tbody>
+                </table>                    
+        </div>
+
+
+        <div class="col-4">
+                <a class="btn btn-info btn-lg" href="/super" role="button">SUPER</a>
+                <br></br>
+                <a class="btn btn-info btn" href="/home/rank_super" role="button">Rank</a>
+                <br></br>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                        <th scope="Servicio">Servicio</th>
+                        <th scope="Progreso">Progreso</th>
+                        <th scope="Condicion">Condicion</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            {% for send2 in send2s %}
+                            <tr>
+                                <td><a href="{{ ''.join(['/super/servicio/id/search?keyword=', send2[0]]) }}">{{ send2[1] }}</a></td> 
+                                <td> {{ send2[4] }} </td>
+                                <td>{% if send2[2] == "Red" %}
+                                        <div id="red_circle"></div>
+                                    {% elif send2[2] == "Yellow" %}
+                                        <div id="yellow_circle"></div>
+                                    {% else %}
+                                        <div id="green_circle"></div>
+                                    {% endif %}
+                                </td>
+               
+                            </tr>
+                            {% endfor %}
+                    </tbody>
+                    </table>
+        </div>
+    </div>
+      
+
+
+{% endblock %} 

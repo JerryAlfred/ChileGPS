@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Graph
+{% endblock %}
+
+{% block main %}
+
+<h1 class="mb-3">Recomendacion para Oficina {{ (sends[0])[2] }}</h1>
+<br>
+
+<table class="table table-striped">
+        <thead>
+            <tr>
+            <th scope="Servicio">Servicio</th>
+            <th scope="Permiso">Recomendacion</th>
+            <th scope="Etapa">Etapa</th>
+            <th scope="Condicion">Condicion</th>
+        </tr>
+        </thead>
+        <tbody>
+                {% for send in sends %}
+                <tr>
+                    <td>{{ send[2] }}</td> 
+                    <td>{{ send[3] }}</td>
+                    <td>{{ send[4] }}</td>
+                    <td>{% if send[5] == "Red" %}
+                            <div id="red_circle"></div>
+                        {% elif send[5] == "Yellow" %}
+                            <div id="yellow_circle"></div>
+                        {% else %}
+                            <div id="green_circle"></div>
+                        {% endif %}
+                    </td>
+    
+                </tr>
+                {% endfor %}
+        </tbody>
+        </table>
+
+    </div>
+      
+
+
+{% endblock %} 

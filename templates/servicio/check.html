@@ -1,0 +1,31 @@
+<!-- this is when the student cancel the appointment with the visitor before he has booked the time-->
+{% extends "layout.html" %}
+
+{% block title %}
+    Check Servicio
+{% endblock %}
+
+{% block main %}
+
+
+<form action="/servicio/check" method="post">
+
+  <h1 class="mb-3">Which service office do you want to check?</h1>
+  <br><br><br>
+
+<div class="form-group">
+  <label for="exampleFormControlSelect1">Check</label>
+  <select class="form-control" id="exampleFormControlSelect1" select name="servicio_numbre">
+  <option disabled selected value="">Choose...</option>
+    {% for send_servicio_numbre_list in send_servicio_numbre_lists %}
+    <option value="{{ send_servicio_numbre_list }}">{{ send_servicio_numbre_list }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+<br><br><br>
+
+<button type="submit" class="btn btn-primary my-1">Check</button>
+</form>      
+
+{% endblock %}

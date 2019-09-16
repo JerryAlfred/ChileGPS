@@ -1,0 +1,21 @@
+<!-- this is when the student cancel the appointment with the visitor before he has booked the time-->
+{% extends "layout.html" %}
+
+{% block title %}
+    Permit
+{% endblock %}
+
+{% block main %}
+
+<!-- to get the list of companies that user can sold-->
+    <form action="/permit" method="post">
+
+    <h1 class="mb-3">Which permit to check?</h1>
+
+    <div class="form-group">
+      <input class="form-control" name="permit_check_id" placeholder="Permit ID" type="text">
+  </div>
+
+  <button class="btn btn-primary" type="submit">Check</button>
+
+{% endblock %}

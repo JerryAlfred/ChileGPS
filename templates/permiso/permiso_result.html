@@ -1,0 +1,132 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Check Permiso
+{% endblock %}
+
+{% block main %}
+
+
+
+
+<div class="container">
+    <div class="row">
+
+      <div class="col-3">
+        <form action="/permiso/permiso" method="post">
+
+            <h3 class="mb-3">Which permit do you want to check?</h3>
+        
+          <div class="form-group">
+            <label for="exampleFormControlSelect1">Check</label>
+
+            <select class="form-control" id="exampleFormControlSelect1" select name="servicio_numbre">
+            <option disabled selected value="">Choose...</option>
+              {% for send_servicio_numbre_list in send_servicio_numbre_lists %}
+              <option value="{{ send_servicio_numbre_list }}">{{ send_servicio_numbre_list }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        
+          <button type="submit" class="btn btn-primary my-1">Check</button>
+        </form>
+
+
+        <form action="/permiso/permiso/result" method="post">
+
+            <h3 class="mb-3">Which exact permit do you want to check?</h3>
+        
+          <div class="form-group">
+            <select class="form-control" id="exampleFormControlSelect1" select name="permiso_numbre">
+            <option disabled selected value="">Choose...</option>
+              {% for send_permiso_numbre_list in send_permiso_numbre_lists %}
+              <option value="{{ send_permiso_numbre_list }}">{{ send_permiso_numbre_list }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        
+          <button type="submit" class="btn btn-primary my-1">Check</button>
+        </form>
+
+
+
+      </div>
+      <div class="col-9">
+        <h2 class="mb-6"> {{ send_servicio_nu }} </h2>
+                  
+        <h3 class="mb-6"> {{ send_permiso_nu }} </h3>
+
+        <canvas id="myChart" width="10" height="4"></canvas>   
+        
+        <script>
+        
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Con GPS', 'Sin GPS'],
+                datasets: [{
+                    label: '# Permit Issue Days',
+                    data: {{ send_permit_dataset }},
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(75, 192, 192, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                },
+
+                annotation: {
+                                annotations: [{
+                                type: 'line',
+                                mode: 'horizontal',
+                                scaleID: 'y-axis-0',
+                                value: {{ send_legal_time }},
+                                borderColor: '#FFA500',
+                                borderWidth: 3,
+                                label: {
+                                    enabled: true,
+                                    content: 'Legal time: {{ send_legal_time }}'
+                                }
+                                }]
+                            },
+                
+            }
+        });
+        </script>
+    
+        <h3 class="mb-6">Average process time / Legal time  / Sin GPS time </h3>
+    
+        <h2 class="mb-6">{{ send_avg_time }} / {{ send_legal_time }} / {{ send_permit_dataset[1] }}</h2>
+    
+        {% if send_avg_time == 0 %}
+        <h3 class="mb-6"><br> There is no data from GPS database of this permit </h3>
+        {% else %}
+          {% if send_permit_dataset[1] == 0 %}
+          <h3 class="mb-6"><br> There is no data from the Sin GPS project database of this permit </h3>
+          {% else %}
+          <h3 class="mb-6"><br> GPS has saved {{ send_saved_time }}% of the time </h3>
+          {% endif %}
+        {% endif %}
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+{% endblock %}

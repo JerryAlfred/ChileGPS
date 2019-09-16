@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Graph
+{% endblock %}
+
+{% block main %}
+
+<h1 class="mb-3"> Alineacion Institutional Proyectos</h1>
+<br>
+
+<table class="table table-striped">
+        <thead>
+            <tr>
+            <th scope="Servicio">Proyecto No.</th>
+            <th scope="Permiso">Servicio</th>
+            <th scope="Etapa">Etapa</th>
+            <th scope="Progreso">Progreso</th>
+            <th scope="Principio">Fecha de Principio</th>
+            <th scope="Fin">Fecha de Fin</th>
+            <th scope="Etapa">Luz</th>
+        </tr>
+        </thead>
+        <tbody>
+                {% for send in sends %}
+                <tr>
+                    <td>{{ send[1] }}</td> 
+                    <td>{{ send[2] }}</td>
+                    <td>{{ send[6] }}</td>
+                    <td>{% if send[9] == "0/0" %}
+                            
+                        {% else %}
+                        <a href="{{ ''.join(['/alineacion/servicio/id/search?keyword=', send[0]]) }}"> {{ send[9] }} </a>
+                        {% endif %}
+                        </td>
+
+                    <td>{{ send[4] }}</td>
+                    <td>{{ send[5] }}</td>
+
+                    <td>{% if send[8] == "Red" %}
+                            <div id="red_circle"></div>
+                        {% elif send[8] == "Yellow" %}
+                            <div id="yellow_circle"></div>
+                        {% else %}
+                            <div id="green_circle"></div>
+                        {% endif %}
+                    </td>
+
+    
+                </tr>
+                {% endfor %}
+        </tbody>
+        </table>
+
+    </div>
+      
+
+
+{% endblock %} 

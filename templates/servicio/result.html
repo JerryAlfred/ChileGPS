@@ -1,0 +1,265 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Graph
+{% endblock %}
+
+{% block main %}
+
+
+
+<div class="container">
+        <div class="row">
+          <div class="col-3">
+              <form action="/servicio" method="post">
+    
+                <h1 class="mb-3">Check Office</h1>
+            
+              <div class="form-group">
+                <label for="exampleFormControlSelect1"> </label>
+                <select class="form-control" id="exampleFormControlSelect1" select name="servicio_numbre">
+                <option disabled selected value="">Choose...</option>
+                  {% for send_servicio_numbre_list in send_servicio_numbre_lists %}
+                  <option value="{{ send_servicio_numbre_list }}">{{ send_servicio_numbre_list }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            
+              <button type="submit" class="btn btn-primary my-1">Check</button>
+            </form>      </div>
+
+
+          <div class="col-9">
+
+                <h1 class="mb-3">Performance Per Permit In {{ send_servicio_nu }}</h1>
+
+                <div style="width: 100%">
+                        <canvas id="canvas"></canvas>
+                    </div>
+                    <!-- <button id="randomizeData">New Search</button> -->
+        
+                    <script>
+                        var chartData = {
+                            labels: [{% for item in send_numbre %}
+                                    "{{item}}",
+                                    {% endfor %}], 
+
+                            datasets: [{
+                                type: 'line',
+                                label: 'Average Process Time',
+                                borderColor: window.chartColors.red,
+                                borderWidth: 2,
+                                fill: false,
+                                data: {{ send_avg_time }},
+                                yAxisID: 'y-axis-1'
+                            }, 
+                        
+        
+                            {
+                                type: 'bar',
+                                label: 'Permits given',
+                                backgroundColor: window.chartColors.blue,
+                                data: {{ send_ed_num }},
+                                borderColor: 'white',
+                                borderWidth: 2,
+                                yAxisID: 'y-axis-2'
+                            },
+        
+                            {
+                                type: 'bar',
+                                label: 'Permits processing',
+                                backgroundColor: window.chartColors.green,
+                                data: {{ send_ing_num }},
+                                borderColor: 'white',
+                                borderWidth: 2,
+                                yAxisID: 'y-axis-2'
+                            }]                    
+                            
+                        };
+        
+                        
+                        window.onload = function() {
+                            var ctx = document.getElementById('canvas').getContext('2d');
+                            window.myMixedChart = new Chart(ctx, {
+                                type: 'bar',
+                                data: chartData,
+                                options: {
+                                    responsive: true,
+                                    title: {
+                                        display: true,
+                                        text: 'GPS Permit Team'
+                                    },
+                                    tooltips: {
+                                        mode: 'index',
+                                        intersect: true
+                                    },
+                                    scales: {
+                                        yAxes: [{
+                                            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                                            display: true,
+                                            position: 'left',
+                                            id: 'y-axis-1',
+                                        }, {
+                                            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                                            display: true,
+                                            position: 'right',
+                                            id: 'y-axis-2',
+                                            // grid line settings
+                                            gridLines: {
+                                                drawOnChartArea: false, // only want the grid lines for one axis to show up
+                                            },
+                                        }],
+                                    },
+                                    onClick: function(c,i) {
+                                        e = i[0];
+                                        var x_value = this.data.labels[e._index];
+                                        var y_value = this.data.datasets[0].data[e._index];
+                                        window.location.replace('/permiso/permiso/numbre/search?keyword='+('{{ send_servicio_id }}')+'_'+(x_value));
+                            },
+                                },
+                                
+                            });
+                        };
+        
+        
+                        document.getElementById('randomizeData').addEventListener('click', function() {
+                            chartData.datasets.forEach(function(dataset) {
+                                dataset.data = dataset.data.map(function() {
+                                    return randomScalingFactor();
+                                });
+                            });
+                            window.myMixedChart.update();
+                        });
+
+
+                        function formatLabel(str, maxwidth){
+                            var sections = [];
+                            var words = str.split(" ");
+                            var temp = "";
+
+                            words.forEach(function(item, index){
+                                if(temp.length > 0)
+                                {
+                                    var concat = temp + ' ' + item;
+
+                                    if(concat.length > maxwidth){
+                                        sections.push(temp);
+                                        temp = "";
+                                    }
+                                    else{
+                                        if(index == (words.length-1))
+                                        {
+                                            sections.push(concat);
+                                            return;
+                                        }
+                                        else{
+                                            temp = concat;
+                                            return;
+                                        }
+                                    }
+                                }
+
+                                if(index == (words.length-1))
+                                {
+                                    sections.push(item);
+                                    return;
+                                }
+
+                                if(item.length < maxwidth) {
+                                    temp = item;
+                                }
+                                else {
+                                    sections.push(item);
+                                }
+
+                            });
+
+                            return sections;
+                        }
+
+                    </script>
+          </div>
+    
+        </div>
+      </div>
+
+
+
+<div class="container">
+  <div class="row justify-content-md-center">
+    <div class="col col-lg-6">
+      
+        <h3 class="mb-3">SUPER Condicion</h3>
+        <br>
+        <table class="table table-striped">
+                <thead>
+                    <tr>
+                    <th scope="Servicio">Servicio</th>
+                    <th scope="Permiso">Permiso</th>
+                    <th scope="Etapa">Etapa</th>
+                    <th scope="Condicion">Condicion</th>
+                </tr>
+                </thead>
+                <tbody>
+                        {% for send1 in send1s %}
+                        <tr>
+                            <td>{{ send1[1] }}</td> 
+                            <td>{{ send1[2] }}</td>
+                            <td>{{ send1[3] }}</td>
+                            <td>{% if send1[4] == "Red" %}
+                                    <div id="red_circle"></div>
+                                {% elif send1[4] == "Yellow" %}
+                                    <div id="yellow_circle"></div>
+                                {% else %}
+                                    <div id="green_circle"></div>
+                                {% endif %}
+                            </td>
+            
+                        </tr>
+                        {% endfor %}
+                </tbody>
+                </table>
+
+
+    </div>
+    <div class="col col-lg-6">
+
+            <h3 class="mb-3">Recomendacion para Oficina {{ (send2s[0])[2] }}</h3>
+            <br>
+            
+            <table class="table table-striped">
+                    <thead>
+                        <tr>
+                        <th scope="Servicio">Servicio</th>
+                        <th scope="Permiso">Recomendacion</th>
+                        <th scope="Etapa">Etapa</th>
+                        <th scope="Condicion">Condicion</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                            {% for send2 in send2s %}
+                            <tr>
+                                <td>{{ send2[2] }}</td> 
+                                <td>{{ send2[3] }}</td>
+                                <td>{{ send2[4] }}</td>
+                                <td>{% if send2[5] == "Red" %}
+                                        <div id="red_circle"></div>
+                                    {% elif send2[5] == "Yellow" %}
+                                        <div id="yellow_circle"></div>
+                                    {% else %}
+                                        <div id="green_circle"></div>
+                                    {% endif %}
+                                </td>
+                
+                            </tr>
+                            {% endfor %}
+                    </tbody>
+                    </table>
+    </div>
+
+  </div>
+
+</div>
+
+
+{% endblock %} 

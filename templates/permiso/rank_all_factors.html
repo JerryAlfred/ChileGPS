@@ -1,0 +1,269 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Graph
+{% endblock %}
+
+{% block main %}
+
+<h1 class="mb-3">Clasificar oficinas por diferentes factores</h1>
+
+        <div id="container" style="width: 100%" >
+            <canvas id="canvas"></canvas>
+        </div>
+
+        <script>
+
+            var name_list = [{% for item in send_select_numbre %}
+                            "{{ item[0] }}",
+                            {% endfor %}];
+
+            var permit_list = {{send_permit}};
+            var ratio_list = {{send_ratio}};
+            var investment_list = {{send_investment}};
+            var illegal_days_list = {{send_illegal_days}};
+
+
+            var barChartData = {
+                labels: name_list,
+
+                datasets: [
+                {
+                    type: 'line',
+                    label: 'Investment/M$',
+                    borderColor: window.chartColors.orange,
+                    borderWidth: 2,
+                    fill: false,
+                    data: investment_list,
+                    yAxisID: 'y-axis-2',
+                }, 
+
+                {
+                    type: 'line',
+                    label: 'No. Permisos en proceso',
+                    borderColor: window.chartColors.purple,
+                    borderWidth: 2,
+                    fill: false,
+                    data: permit_list,
+                    yAxisID: 'y-axis-1',
+                }, 
+
+                {
+                    type: 'line',
+                    label: '% de días real/legal',
+                    borderColor: window.chartColors.red,
+                    borderWidth: 2,
+                    fill: false,
+                    data: ratio_list,
+                    yAxisID: 'y-axis-1',
+                }, 
+
+                {
+                    type: 'line',
+                    label: 'No. días tardíos promedio',
+                    borderColor: window.chartColors.green,
+                    borderWidth: 2,
+                    fill: false,
+                    data: illegal_days_list,
+                    yAxisID: 'y-axis-1',
+                }
+
+            ]
+            };
+
+
+            window.onload = function() {
+                var ctx = document.getElementById('canvas').getContext('2d');
+                window.myBar = new Chart(ctx, {
+                    type: 'bar',
+                    data: barChartData,
+                    options: {
+                        responsive: true,
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Comparación entre oficinas por diferentes factores'
+                        },
+                        scales: {
+                            yAxes: [{
+                                type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                                display: true,
+                                position: 'left',
+                                id: 'y-axis-1',
+                            }, {
+                                type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                                display: true,
+                                position: 'right',
+                                id: 'y-axis-2',
+                                // grid line settings
+                                gridLines: {
+                                    drawOnChartArea: false, // only want the grid lines for one axis to show up
+                                },
+                            }],
+                        },
+                        tooltips: {
+                            // position: position,
+                            mode: 'index',
+                            intersect: false, 
+
+                        },
+                        maintainAspectRatio: true,
+                        onClick: function(c,i) {
+                                e = i[0];
+                                var x_value = this.data.labels[e._index];
+                                var y_value = this.data.datasets[0].data[e._index];
+                                window.location.replace('/permiso/servicio/numbre/search?keyword='+(x_value));
+                            },
+                    }
+                    
+                });
+
+                document.getElementById('ButtonRankInvestment').addEventListener('click', function() {
+
+                    var join_list = [name_list, investment_list, permit_list, ratio_list, illegal_days_list];
+
+                    function transpose(a) {
+                        return Object.keys(a[0]).map(function(c) {
+                            return a.map(function(r) { return r[c]; });
+                        });
+                    };
+                 
+                    join_list = transpose(join_list);                     
+                    join_list.sort(function(a,b){return b[1] - a[1];}); 
+                    join_list = transpose(join_list);  
+
+                    name_list = join_list[0];
+                    investment_list = join_list[1];
+                    permit_list = join_list[2];
+                    ratio_list = join_list[3];
+                    illegal_days_list = join_list[4];
+
+                    barChartData.labels = name_list;
+                    barChartData.datasets[0].data = investment_list;
+                    barChartData.datasets[1].data = permit_list;
+                    barChartData.datasets[2].data = ratio_list;
+                    barChartData.datasets[3].data = illegal_days_list;
+                    window.myBar.update();
+                });
+
+                document.getElementById('ButtonRankPermit').addEventListener('click', function() {
+
+                    var join_list = [name_list, investment_list, permit_list, ratio_list, illegal_days_list];
+
+                    function transpose(a) {
+                        return Object.keys(a[0]).map(function(c) {
+                            return a.map(function(r) { return r[c]; });
+                        });
+                    };
+
+                    join_list = transpose(join_list);                     
+                    join_list.sort(function(a,b){return b[2] - a[2];}); 
+                    join_list = transpose(join_list);  
+
+                    name_list = join_list[0];
+                    investment_list = join_list[1];
+                    permit_list = join_list[2];
+                    ratio_list = join_list[3];
+                    illegal_days_list = join_list[4];
+
+                    barChartData.labels = name_list;
+                    barChartData.datasets[0].data = investment_list;
+                    barChartData.datasets[1].data = permit_list;
+                    barChartData.datasets[2].data = ratio_list;
+                    barChartData.datasets[3].data = illegal_days_list;
+                    window.myBar.update();
+                });
+
+
+
+                document.getElementById('ButtonRankRatio').addEventListener('click', function() {
+
+                    var join_list = [name_list, investment_list, permit_list, ratio_list, illegal_days_list];
+
+                    function transpose(a) {
+                        return Object.keys(a[0]).map(function(c) {
+                            return a.map(function(r) { return r[c]; });
+                        });
+                    };
+
+                    join_list = transpose(join_list);                     
+                    join_list.sort(function(a,b){return b[3] - a[3];}); 
+                    join_list = transpose(join_list);  
+
+                    name_list = join_list[0];
+                    investment_list = join_list[1];
+                    permit_list = join_list[2];
+                    ratio_list = join_list[3];
+                    illegal_days_list = join_list[4];
+
+                    barChartData.labels = name_list;
+                    barChartData.datasets[0].data = investment_list;
+                    barChartData.datasets[1].data = permit_list;
+                    barChartData.datasets[2].data = ratio_list;
+                    barChartData.datasets[3].data = illegal_days_list;
+                    window.myBar.update();
+                });
+
+
+
+                document.getElementById('ButtonRankIllegal_Days').addEventListener('click', function() {
+
+                    var join_list = [name_list, investment_list, permit_list, ratio_list, illegal_days_list];
+
+                    function transpose(a) {
+                        return Object.keys(a[0]).map(function(c) {
+                            return a.map(function(r) { return r[c]; });
+                        });
+                    };
+
+                    join_list = transpose(join_list);                     
+                    join_list.sort(function(a,b){return b[4] - a[4];}); 
+                    join_list = transpose(join_list);  
+
+                    name_list = join_list[0];
+                    investment_list = join_list[1];
+                    permit_list = join_list[2];
+                    ratio_list = join_list[3];
+                    illegal_days_list = join_list[4];
+
+                    barChartData.labels = name_list;
+                    barChartData.datasets[0].data = investment_list;
+                    barChartData.datasets[1].data = permit_list;
+                    barChartData.datasets[2].data = ratio_list;
+                    barChartData.datasets[3].data = illegal_days_list;
+                    window.myBar.update();
+                });
+
+
+                };
+
+
+
+            </script>
+
+        <button id="ButtonRankInvestment">Rank by investment</button> 
+        <button id="ButtonRankPermit">Rank by permits in process</button> 
+        <button id="ButtonRankRatio">Rank by real/legal ratio</button> 
+        <button id="ButtonRankIllegal_Days">Rank by late days</button> 
+
+
+<br><br>
+
+<div class="container">
+    <div class="row">
+
+                <form action="/permiso/rank_days" method="post">
+                    {% for item in send_all_numbre %}
+                        <label></label><input type="checkbox" name="check" value= {{ item[1] }} > {{ item[0] }} </label>
+                    {% endfor %}
+                <br>
+                  <button type="submit" class="btn btn-primary my-1">Comparar las oficinas</button>
+                </form>
+
+     </div>
+    </div>
+
+
+{% endblock %} 

@@ -1,0 +1,501 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Graph
+{% endblock %}
+
+{% block main %}
+
+<h1 class="mb-3">Performance Per Office</h1>
+
+        <div style="width: 100%">
+                <canvas id="canvas"></canvas>
+            </div>
+            <script>
+
+
+            var name_list = [{% for item in send_select_numbre %}
+                            "{{ item[0] }}",
+                            {% endfor %}];
+
+            var time_list = {{ send_avg_time }} ;
+            var ratio_list = {{ send_ratio }} ;
+
+            console.log([name_list,time_list,ratio_list])
+
+                var chartData = {
+                    labels: name_list,
+
+                    datasets: 
+                     [
+                
+
+                    {
+                        type: 'line',
+                        label: 'Lights',
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                        fill: false,
+                        data: {{ (send_light[3]) }},
+                        yAxisID: 'y-axis-2',
+                        pointRadius: 10,
+                        pointHoverRadius: 15,
+                        pointBackgroundColor: '#ffffff',
+                        showLine: false // no line shown
+                    }, 
+                    {
+                        type: 'line',
+                        label: '>3 times',
+                        borderColor: '#cc3232',
+                        borderWidth: 2,
+                        fill: false,
+                        data: {{ (send_light[0]) }},
+                        yAxisID: 'y-axis-2',
+                        pointRadius: 10,
+                        pointHoverRadius: 15,
+                        pointHitRadius: 15,
+                        pointBackgroundColor: '#cc3232',
+                        showLine: false // no line shown
+                    }, 
+                    {
+                        type: 'line',
+                        label: '>1.5 times',
+                        borderColor: '#e7b416',
+                        borderWidth: 2,
+                        fill: false,
+                        data: {{ (send_light[1]) }},
+                        yAxisID: 'y-axis-2',
+                        pointRadius: 10,
+                        pointHoverRadius: 15,
+                        pointBackgroundColor: '#e7b416',
+                        showLine: false // no line shown
+                    }, 
+                    {
+                        type: 'line',
+                        label: '<1.5 times',
+                        borderColor: '#2dc937',
+                        borderWidth: 2,
+                        fill: false,
+                        data: {{ (send_light[2]) }},
+                        yAxisID: 'y-axis-2',
+                        pointRadius: 10,
+                        pointHoverRadius: 15,
+                        pointBackgroundColor: '#2dc937',
+                        showLine: false // no line shown
+                    }, 
+
+
+                    {
+                        type: 'bar',
+                        label: 'Average Processing Time',
+                        backgroundColor: window.chartColors.blue,
+                        data: time_list,
+                        borderColor: 'white',
+                        borderWidth: 2,
+                        yAxisID: 'y-axis-1'
+                    },
+
+                    {
+                        type: 'bar',
+                        label: '% of Real to Legal',
+                        backgroundColor: window.chartColors.green,
+                        data: ratio_list,
+                        borderColor: 'white',
+                        borderWidth: 2,
+                        yAxisID: 'y-axis-1'
+                    }]
+
+
+                };
+            
+
+            
+            window.onload = function() {
+                var ctx = document.getElementById('canvas').getContext('2d');
+
+                window.myMixedChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        title: {
+                            display: true,
+                            text: 'GPS Permit Team'
+                        },
+                        tooltips: {
+                            mode: 'index',
+                            intersect: true
+                        },
+                        scales: {
+                            yAxes: [{
+                                type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                                display: true,
+                                position: 'left',
+                                id: 'y-axis-1',
+                            }, {
+                                type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                                display: false,
+                                position: 'right',
+                                id: 'y-axis-2',
+                                // grid line settings
+                                gridLines: {
+                                    drawOnChartArea: false, // only want the grid lines for one axis to show up
+                                },
+                            }],
+                        },
+                        onClick: function(c,i) {
+                            e = i[0];
+                            var x_value = this.data.labels[e._index];
+                            var y_value = this.data.datasets[0].data[e._index];
+                            window.location.replace('/permiso/servicio/numbre/search?keyword='+(x_value));
+                        },
+                    }
+                });
+
+
+
+
+
+
+
+                var RankTime = document.getElementById('ButtonRankTime');
+            RankTime.onclick = function(){
+                
+                function transpose(a) {
+                    return Object.keys(a[0]).map(function(c) {
+                        return a.map(function(r) { return r[c]; });
+                    });
+                }
+
+                var join_list = [name_list, time_list, ratio_list];
+                join_list = transpose(join_list);                     
+                join_list.sort(function(a,b){return b[1] - a[1];}); 
+                join_list = transpose(join_list);  
+
+                console.log(join_list)
+
+                name_list = join_list[0];
+                time_list = join_list[1];
+                ratio_list = join_list[2];
+                var ChartData = {
+                    labels: name_list,                    
+                    
+
+                    datasets: 
+                    [
+                        {
+                            type: 'line',
+                            label: 'Lights',
+                            borderColor: '#ffffff',
+                            borderWidth: 2,
+                            fill: false,
+                            data: {{ (send_light[3]) }},
+                            yAxisID: 'y-axis-2',
+                            pointRadius: 10,
+                            pointHoverRadius: 15,
+                            pointBackgroundColor: '#ffffff',
+                            showLine: false // no line shown
+                        }, 
+                        {
+                            type: 'line',
+                            label: '>3 times',
+                            borderColor: '#cc3232',
+                            borderWidth: 2,
+                            fill: false,
+                            data: {{ (send_light[0]) }},
+                            yAxisID: 'y-axis-2',
+                            pointRadius: 10,
+                            pointHoverRadius: 15,
+                            pointHitRadius: 15,
+                            pointBackgroundColor: '#cc3232',
+                            showLine: false // no line shown
+                        }, 
+                        {
+                            type: 'line',
+                            label: '>1.5 times',
+                            borderColor: '#e7b416',
+                            borderWidth: 2,
+                            fill: false,
+                            data: {{ (send_light[1]) }},
+                            yAxisID: 'y-axis-2',
+                            pointRadius: 10,
+                            pointHoverRadius: 15,
+                            pointBackgroundColor: '#e7b416',
+                            showLine: false // no line shown
+                        }, 
+                        {
+                            type: 'line',
+                            label: '<1.5 times',
+                            borderColor: '#2dc937',
+                            borderWidth: 2,
+                            fill: false,
+                            data: {{ (send_light[2]) }},
+                            yAxisID: 'y-axis-2',
+                            pointRadius: 10,
+                            pointHoverRadius: 15,
+                            pointBackgroundColor: '#2dc937',
+                            showLine: false // no line shown
+                        }, 
+
+
+                        {
+                            type: 'bar',
+                            label: 'Average Processing Time',
+                            backgroundColor: window.chartColors.blue,
+                            data: time_list,
+                            borderColor: 'white',
+                            borderWidth: 2,
+                            yAxisID: 'y-axis-1'
+                        },
+
+                        {
+                            type: 'bar',
+                            label: '% of Real to Legal',
+                            backgroundColor: window.chartColors.green,
+                            data: ratio_list,
+                            borderColor: 'white',
+                            borderWidth: 2,
+                            yAxisID: 'y-axis-1'
+                        }]
+
+
+                };
+
+
+
+                var ctx = document.getElementById('canvas').getContext('2d');
+                myMixedChart.destroy(); 
+                window.myMixedChart = new Chart(ctx, {
+                type: 'bar',
+                data: ChartData,
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'GPS Permit Team'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: true
+                    },
+                    scales: {
+                        yAxes: [{
+                            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                            display: true,
+                            position: 'left',
+                            id: 'y-axis-1',
+                        }, {
+                            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                            display: true,
+                            position: 'right',
+                            id: 'y-axis-2',
+                            // grid line settings
+                            gridLines: {
+                                drawOnChartArea: false, // only want the grid lines for one axis to show up
+                            },
+                        }],
+                    },
+                    onClick: function(c,i) {
+                        e = i[0];
+                        var x_value = this.data.labels[e._index];
+                        var y_value = this.data.datasets[0].data[e._index];
+                        window.location.replace('/permiso/servicio/numbre/search?keyword='+(x_value));
+                    },
+                }
+            });
+
+
+        };
+
+
+
+
+        var RankRatio = document.getElementById('ButtonRankRatio');
+            RankRatio.onclick = function(){
+                
+                function transpose(a) {
+                    return Object.keys(a[0]).map(function(c) {
+                        return a.map(function(r) { return r[c]; });
+                    });
+                }
+
+                var join_list = [name_list, time_list, ratio_list];
+                join_list = transpose(join_list);                     
+                join_list.sort(function(a,b){return b[2] - a[2];}); 
+                join_list = transpose(join_list);  
+
+                console.log(join_list)
+
+                name_list = join_list[0];
+                time_list = join_list[1];
+                ratio_list = join_list[2];
+                var ChartData = {
+                    labels: name_list,                    
+                    
+
+                    datasets: 
+                    [
+                        {
+                            type: 'line',
+                            label: 'Lights',
+                            borderColor: '#ffffff',
+                            borderWidth: 2,
+                            fill: false,
+                            data: {{ (send_light[3]) }},
+                            yAxisID: 'y-axis-2',
+                            pointRadius: 10,
+                            pointHoverRadius: 15,
+                            pointBackgroundColor: '#ffffff',
+                            showLine: false // no line shown
+                        }, 
+                        {
+                            type: 'line',
+                            label: '>3 times',
+                            borderColor: '#cc3232',
+                            borderWidth: 2,
+                            fill: false,
+                            data: {{ (send_light[0]) }},
+                            yAxisID: 'y-axis-2',
+                            pointRadius: 10,
+                            pointHoverRadius: 15,
+                            pointHitRadius: 15,
+                            pointBackgroundColor: '#cc3232',
+                            showLine: false // no line shown
+                        }, 
+                        {
+                            type: 'line',
+                            label: '>1.5 times',
+                            borderColor: '#e7b416',
+                            borderWidth: 2,
+                            fill: false,
+                            data: {{ (send_light[1]) }},
+                            yAxisID: 'y-axis-2',
+                            pointRadius: 10,
+                            pointHoverRadius: 15,
+                            pointBackgroundColor: '#e7b416',
+                            showLine: false // no line shown
+                        }, 
+                        {
+                            type: 'line',
+                            label: '<1.5 times',
+                            borderColor: '#2dc937',
+                            borderWidth: 2,
+                            fill: false,
+                            data: {{ (send_light[2]) }},
+                            yAxisID: 'y-axis-2',
+                            pointRadius: 10,
+                            pointHoverRadius: 15,
+                            pointBackgroundColor: '#2dc937',
+                            showLine: false // no line shown
+                        }, 
+
+
+                        {
+                            type: 'bar',
+                            label: 'Average Processing Time',
+                            backgroundColor: window.chartColors.blue,
+                            data: time_list,
+                            borderColor: 'white',
+                            borderWidth: 2,
+                            yAxisID: 'y-axis-1'
+                        },
+
+                        {
+                            type: 'bar',
+                            label: '% of Real to Legal',
+                            backgroundColor: window.chartColors.green,
+                            data: ratio_list,
+                            borderColor: 'white',
+                            borderWidth: 2,
+                            yAxisID: 'y-axis-1'
+                        }]
+
+
+                };
+
+
+
+                var ctx = document.getElementById('canvas').getContext('2d');
+                myMixedChart.destroy(); 
+                window.myMixedChart = new Chart(ctx, {
+                type: 'bar',
+                data: ChartData,
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'GPS Permit Team'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: true
+                    },
+                    scales: {
+                        yAxes: [{
+                            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                            display: true,
+                            position: 'left',
+                            id: 'y-axis-1',
+                        }, {
+                            type: 'linear', // only linear but allow scale type registration. This allows extensions to exist solely for log scale for instance
+                            display: true,
+                            position: 'right',
+                            id: 'y-axis-2',
+                            // grid line settings
+                            gridLines: {
+                                drawOnChartArea: false, // only want the grid lines for one axis to show up
+                            },
+                        }],
+                    },
+                    onClick: function(c,i) {
+                        e = i[0];
+                        var x_value = this.data.labels[e._index];
+                        var y_value = this.data.datasets[0].data[e._index];
+                        window.location.replace('/permiso/servicio/numbre/search?keyword='+(x_value));
+                    },
+                }
+            });
+
+
+        };
+
+
+
+
+
+
+    };
+
+            
+
+        </script>
+
+
+<button id="ButtonRankTime">Rank Time from Max </button> 
+<button id="ButtonRankRatio">Rank Ratio from Max </button> 
+
+
+
+<br><br>
+
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+            <a class="btn btn-primary btn" href="/permiso" role="button">Cama de todos servicios {{ send_servicio_nu }}</a>                
+        </div>
+
+        <div class="col-9">
+
+                <form action="/permiso" method="post">
+                    {% for item in send_all_numbre %}
+                        <label></label><input type="checkbox" name="check" value= {{ item[1] }} > {{ item[0] }} </label>
+                    {% endfor %}
+                <br>
+                  <button type="submit" class="btn btn-primary my-1">Comparar oficinas</button>
+                </form>
+
+        </div>
+     </div>
+    </div>
+
+{% endblock %} 
